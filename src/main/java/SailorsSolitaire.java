@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 public class SailorsSolitaire {
 
-  public static final int DEPTH = 46;
+  public static final int MAX_DEPTH = 46;
 
   public static char[][] startingBoard = {
       {'W', 'W', 'W', ' ', ' '},
@@ -104,7 +104,7 @@ public class SailorsSolitaire {
         return currentState;
       }
       // node expansion
-      if (currentState.getDepth() < DEPTH) {
+      if (currentState.getDepth() < MAX_DEPTH) {
         for (int[] move : currentState.generateMoves()) {
           currentState.switchSquares(move[0], move[1], move[2], move[3]);
           todo.push(
@@ -117,7 +117,7 @@ public class SailorsSolitaire {
   }
 
   public static State backtracking(State currentState, int depth) {
-    if (depth > DEPTH) {
+    if (depth > MAX_DEPTH) {
       return null;
     }
 
