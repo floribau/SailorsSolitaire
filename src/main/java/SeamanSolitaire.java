@@ -87,9 +87,12 @@ public class SeamanSolitaire {
     while (!todo.isEmpty()) {
       State currentState = todo.pop();
       if (visitedDepth.putIfAbsent(currentState, currentState.getDepth()) != null) {
+        // state has been visited
         if (visitedDepth.get(currentState) > currentState.getDepth()) {
+          // state has been visited in greater depth => still has to be expanded in this depth
           visitedDepth.replace(currentState, currentState.getDepth());
         } else {
+          // eliminate duplicate
           continue;
         }
       }
@@ -117,7 +120,7 @@ public class SeamanSolitaire {
     if (visitedDepth.putIfAbsent(currentState, currentState.getDepth()) != null) {
       // state has been visited
       if (visitedDepth.get(currentState) > currentState.getDepth()) {
-        // state has been visited in larger depth => still has to be expanded in this depth
+        // state has been visited in greater depth => still has to be expanded in this depth
         visitedDepth.replace(currentState, currentState.getDepth());
       } else {
         // eliminate duplicate
