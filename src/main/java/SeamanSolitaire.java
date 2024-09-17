@@ -18,12 +18,10 @@ public class SeamanSolitaire {
       {'W', 'W', ' '},
       {'W', 'o', 'B'},
       {' ', 'B', 'B'}};
-
  */
 
-
   public static State startingState = new State(startingBoard, null);
-  public static final int DEPTH = 47;
+  public static final int DEPTH = 46;
   public static HashSet<State> visited = new HashSet<>();
   public static HashMap<State, Integer> visitedDepth = new HashMap<>();
 
@@ -32,8 +30,8 @@ public class SeamanSolitaire {
 
     // run search algorithm
     long startTime = System.currentTimeMillis();
-    // State solution = bfs(startingState);
-    State solution = dfs(startingState, DEPTH);
+    State solution = bfs(startingState);
+    // State solution = dfs(startingState);
     // State solution = backtracking(startingState, 0);
     long finishTime = System.currentTimeMillis();
     System.out.println(
@@ -64,12 +62,15 @@ public class SeamanSolitaire {
 
     while (!todo.isEmpty()) {
       State currentState = todo.poll();
+      // duplicate elimination
       if (!visited.add(currentState)) {
         continue;
       }
+      // target test
       if (currentState.isFinished()) {
         return currentState;
       }
+      // node expansion
       for (int[] move : currentState.generateMoves()) {
         currentState.switchSquares(move[0], move[1], move[2], move[3]);
         todo.offer(new State(currentState.getBoard(), currentState));
@@ -79,8 +80,8 @@ public class SeamanSolitaire {
     return null;
   }
 
-  public static State dfs(State startingState, int depth) {
-    // limited depth first search
+  public static State dfs(State startingState) {
+    // depth first search with limited depth
     ArrayDeque<State> todo = new ArrayDeque<>();
     todo.push(startingState);
 
@@ -89,17 +90,19 @@ public class SeamanSolitaire {
       if (visitedDepth.putIfAbsent(currentState, currentState.getDepth()) != null) {
         // state has been visited
         if (visitedDepth.get(currentState) > currentState.getDepth()) {
-          // state has been visited in greater depth => still has to be expanded in this depth
+          // state has been visited in deeper depth => still has to be expanded in this shallower depth
           visitedDepth.replace(currentState, currentState.getDepth());
         } else {
-          // eliminate duplicate
+          // duplicate elimination
           continue;
         }
       }
+      // target test
       if (currentState.isFinished()) {
         return currentState;
       }
-      if (currentState.getDepth() < depth) {
+      // node expansion
+      if (currentState.getDepth() < DEPTH) {
         for (int[] move : currentState.generateMoves()) {
           currentState.switchSquares(move[0], move[1], move[2], move[3]);
           todo.push(
@@ -112,30 +115,33 @@ public class SeamanSolitaire {
   }
 
   public static State backtracking(State currentState, int depth) {
-    // calls itself recursively
-    // doesn't work properly (likely due to pruning of visited state nodes)
-    if (depth >= DEPTH) {
+    if (depth > DEPTH) {
      return null;
     }
-    if (visitedDepth.putIfAbsent(currentState, currentState.getDepth()) != null) {
+
+    if (visitedDepth.putIfAbsent(currentState, depth) != null) {
       // state has been visited
-      if (visitedDepth.get(currentState) > currentState.getDepth()) {
-        // state has been visited in greater depth => still has to be expanded in this depth
-        visitedDepth.replace(currentState, currentState.getDepth());
+      if (visitedDepth.get(currentState) > depth) {
+          // state has been visited in deeper depth => still has to be expanded in this shallower depth
+        visitedDepth.replace(currentState, depth);
       } else {
-        // eliminate duplicate
+        // duplicate elimination
         return null;
       }
     }
+    // target test
     if (currentState.isFinished()) {
       return currentState;
     }
+    // node expansion
     for (int[] move : currentState.generateMoves()) {
       currentState.switchSquares(move[0], move[1], move[2], move[3]);
       State newState = new State(currentState.getBoard(), currentState);
       currentState.switchSquares(move[0], move[1], move[2], move[3]);
+      // recursively search deeper
       State result = backtracking(newState, depth + 1);
       if (result != null) {
+        // return solution
         return result;
       }
     }
