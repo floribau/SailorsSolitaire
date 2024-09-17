@@ -63,7 +63,7 @@ public class State {
     // board is finished if flipped compared to starting state
     for (int i = 0; i < HEIGHT; i++) {
       for (int j = 0; j < WIDTH; j++) {
-        if (board[i][j] != SeamanSolitaire.startingState.board[HEIGHT - 1 - i][WIDTH - 1 - j]) {
+        if (board[i][j] != SailorsSolitaire.startingState.board[HEIGHT - 1 - i][WIDTH - 1 - j]) {
           return false;
         }
       }

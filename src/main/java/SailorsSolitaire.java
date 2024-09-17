@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-public class SeamanSolitaire {
+public class SailorsSolitaire {
 
   public static final int DEPTH = 46;
 
