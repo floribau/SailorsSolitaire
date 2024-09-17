@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 public class SeamanSolitaire {
+
+  public static final int DEPTH = 46;
+
   public static char[][] startingBoard = {
       {'W', 'W', 'W', ' ', ' '},
       {'W', 'W', 'W', ' ', ' '},
@@ -12,7 +15,7 @@ public class SeamanSolitaire {
       {' ', ' ', 'B', 'B', 'B'},
       {' ', ' ', 'B', 'B', 'B'}};
 
-/*
+  /*
   // smaller board for testing purposes
   public static char[][] startingBoard = {
       {'W', 'W', ' '},
@@ -21,7 +24,6 @@ public class SeamanSolitaire {
  */
 
   public static State startingState = new State(startingBoard, null);
-  public static final int DEPTH = 46;
   public static HashSet<State> visited = new HashSet<>();
   public static HashMap<State, Integer> visitedDepth = new HashMap<>();
 
@@ -116,13 +118,13 @@ public class SeamanSolitaire {
 
   public static State backtracking(State currentState, int depth) {
     if (depth > DEPTH) {
-     return null;
+      return null;
     }
 
     if (visitedDepth.putIfAbsent(currentState, depth) != null) {
       // state has been visited
       if (visitedDepth.get(currentState) > depth) {
-          // state has been visited in deeper depth => still has to be expanded in this shallower depth
+        // state has been visited in deeper depth => still has to be expanded in this shallower depth
         visitedDepth.replace(currentState, depth);
       } else {
         // duplicate elimination
