@@ -2,11 +2,12 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 
 public class State {
+
+  public static int HEIGHT = 5;
+  public static int WIDTH = 5;
   private final State parent;
   private final char[][] board;
   private int depth = 0;
-  public static int HEIGHT = 5;
-  public static int WIDTH = 5;
 
   public State(char[][] board, State parent) {
     // general constructor
@@ -60,9 +61,9 @@ public class State {
 
   public boolean isFinished() {
     // board is finished if flipped compared to starting state
-    for (int i=0; i<HEIGHT; i++) {
-      for (int j=0; j<WIDTH; j++) {
-        if(board[i][j] != SeamanSolitaire.startingState.board[HEIGHT-1-i][WIDTH-1-j]) {
+    for (int i = 0; i < HEIGHT; i++) {
+      for (int j = 0; j < WIDTH; j++) {
+        if (board[i][j] != SeamanSolitaire.startingState.board[HEIGHT - 1 - i][WIDTH - 1 - j]) {
           return false;
         }
       }
@@ -78,26 +79,18 @@ public class State {
         if (board[i][j] == 'W' || board[i][j] == 'B') {
           for (int offset : new int[]{-1, 1}) {
             // check for shifts
-            if (isOnBoard(i + offset, j)) {
-              if (board[i + offset][j] == 'o') {
-                moves.add(new int[]{i, j, i + offset, j});
-              }
+            if (isEmptySquare(i + offset, j)) {
+              moves.add(new int[]{i, j, i + offset, j});
             }
-            if (isOnBoard(i, j + offset)) {
-              if (board[i][j + offset] == 'o') {
-                moves.add(new int[]{i, j, i, j + offset});
-              }
+            if (isEmptySquare(i, j + offset)) {
+              moves.add(new int[]{i, j, i, j + offset});
             }
             // check for jumps
-            if (isOnBoard(i + 2 * offset, j)) {
-              if (board[i + 2 * offset][j] == 'o') {
-                moves.add(new int[]{i, j, i + 2 * offset, j});
-              }
+            if (isEmptySquare(i + 2 * offset, j)) {
+              moves.add(new int[]{i, j, i + 2 * offset, j});
             }
-            if (isOnBoard(i, j + 2 * offset)) {
-              if (board[i][j + 2 * offset] == 'o') {
-                moves.add(new int[]{i, j, i, j + 2 * offset});
-              }
+            if (isEmptySquare(i, j + 2 * offset)) {
+              moves.add(new int[]{i, j, i, j + 2 * offset});
             }
           }
         }
@@ -113,8 +106,9 @@ public class State {
     board[x2][y2] = temp;
   }
 
-  public boolean isOnBoard(int x, int y) {
-    return x >= 0 && x < HEIGHT && y >= 0 && y < WIDTH;
+  public boolean isEmptySquare(int x, int y) {
+    // checks if square is on board and is the empty square (symbol 'o')
+    return x >= 0 && x < HEIGHT && y >= 0 && y < WIDTH && board[x][y] == 'o';
   }
 
   public State getParent() {
