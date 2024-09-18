@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 public class SailorsSolitaire {
 
-  public static final int MAX_DEPTH = 46;
+  public static final int MAX_DEPTH = Integer.MAX_VALUE;
 
   public static char[][] startingBoard = {
       {'W', 'W', 'W', ' ', ' '},
@@ -32,12 +32,11 @@ public class SailorsSolitaire {
 
     // run search algorithm
     long startTime = System.currentTimeMillis();
-    State solution = bfs(startingState);
-    // State solution = dfs(startingState);
+    // State solution = bfs(startingState);
+    State solution = dfs(startingState);
+    // State solution = dfsLimited(startingState);
     // State solution = backtracking(startingState, 0);
     long finishTime = System.currentTimeMillis();
-    System.out.println(
-        "Time elapsed: " + Duration.ofMillis(finishTime - startTime).toSeconds() + " seconds.");
 
     // print solution if solution was found
     if (solution != null) {
@@ -46,14 +45,20 @@ public class SailorsSolitaire {
         solutionPath.addFirst(solution);
         solution = solution.getParent();
       }
-      System.out.println("Solution found in " + solutionPath.size() + " steps :)\n");
       int count = 1;
       for (State s : solutionPath) {
         System.out.println("After " + count++ + ". step:");
         System.out.println(s);
       }
+      System.out.println("Solution found in " + solutionPath.size() + " steps :)");
+      System.out.println(
+          "Time elapsed: " + (finishTime - startTime) + "ms (" + Duration.ofMillis(
+              finishTime - startTime).toSeconds() + " seconds).");
+
     } else {
       System.out.println("No solution found :(");
+      System.out.println(
+          "Time elapsed: " + Duration.ofMillis(finishTime - startTime).toSeconds() + " seconds.");
     }
   }
 
@@ -83,6 +88,32 @@ public class SailorsSolitaire {
   }
 
   public static State dfs(State startingState) {
+    // depth first search without limited depth
+    ArrayDeque<State> todo = new ArrayDeque<>();
+    todo.push(startingState);
+
+    while (!todo.isEmpty()) {
+      State currentState = todo.pop();
+      if (!visited.add(currentState)) {
+        continue;
+      }
+
+      // target test
+      if (currentState.isFinished()) {
+        return currentState;
+      }
+      // node expansion
+      for (int[] move : currentState.generateMoves()) {
+        currentState.switchSquares(move[0], move[1], move[2], move[3]);
+        todo.push(
+            new State(currentState.getBoard(), currentState, currentState.getDepth() + 1));
+        currentState.switchSquares(move[0], move[1], move[2], move[3]);
+      }
+    }
+    return null;
+  }
+
+  public static State dfsLimited(State startingState) {
     // depth first search with limited depth
     ArrayDeque<State> todo = new ArrayDeque<>();
     todo.push(startingState);
