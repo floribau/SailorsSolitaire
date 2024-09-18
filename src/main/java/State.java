@@ -44,7 +44,17 @@ public class State {
 
   @Override
   public int hashCode() {
-    return Arrays.deepHashCode(board);
+    int hash = 1;
+    for (char[] row : this.board) {
+      if(row != null) {
+        for (char c : row) {
+          hash = 31 * hash + c;
+        }
+      } else {
+        hash = 31 * hash;
+      }
+    }
+    return hash;
   }
 
   @Override
